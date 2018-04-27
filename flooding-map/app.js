@@ -12,23 +12,28 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGV2c2VlZCIsImEiOiJnUi1mbkVvIn0.018aLhX0Mb0td
 var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/mapbox/streets-v9',
-	center: [-122.486052, 37.830348],
+	center: [-79.00946, -8.10773],
 	zoom: 15,
 	hash: true
 });
 
 
 loadGist(function(data) {
+	console.log(data)
 
+	firebase
+		.database()
+		.ref('roads/way')
+		.on(
+			'value',
+			function(snapshot) {
 
-	for (var i = 0; i < 1000; i++) {
-		data.features[i].properties.status="marked" 
-	}
-
-
-for (var i = 800; i < 1000; i++) {
-		data.features[i].properties.status="validate" 
-	}
+				console.log(snapshot.val())
+			},
+			function(errorObject) {
+				console.log('The read failed: ' + errorObject.code);
+			}
+		);
 
 
 	map.on('load', function() {
@@ -50,14 +55,10 @@ for (var i = 800; i < 1000; i++) {
 					stops: [
 						['marked', '#f4f0a1'],
 						['validate', '#0ff']
-
-						// ['progress', '#eaa8a8'],
-						// ['done', '#f4f0a1'],
-						// ['validate', '#8ef9be']
 					]
 				},
 				'line-opacity': 1,
-				            "line-width": 5
+				"line-width": 5
 
 			}
 		});
