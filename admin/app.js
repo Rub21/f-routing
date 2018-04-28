@@ -1,10 +1,10 @@
 var config = {
-    apiKey: "AIzaSyDAk4WRCP4zx4JhkF2czVu4LJkzvVMN_Rg",
-    authDomain: "roads-a384c.firebaseapp.com",
-    databaseURL: "https://roads-a384c.firebaseio.com",
-    projectId: "roads-a384c",
-    storageBucket: "roads-a384c.appspot.com",
-    messagingSenderId: "1005333787675"
+    apiKey: "AIzaSyCdzFXh3lnra26ujzMqEqmRqucsu4Xwcrc",
+    authDomain: "i-data-85f05.firebaseapp.com",
+    databaseURL: "https://i-data-85f05.firebaseio.com",
+    projectId: "i-data-85f05",
+    storageBucket: "i-data-85f05.appspot.com",
+    messagingSenderId: "834555292442"
 };
 firebase.initializeApp(config);
 
@@ -12,74 +12,64 @@ mapboxgl.accessToken = 'pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36a
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
-    center: [-122.486052, 37.830348],
-    zoom: 15
+    center: [-79.02496, -8.10641],
+    zoom: 13,
+    hash: true
 });
 
-map.on('load', function () {
+map.on('load', function() {
 
-    map.addLayer({
-        "id": "route",
-        "type": "line",
-        "source": {
+
+});
+
+
+firebase.database()
+    .ref('features')
+    .orderByChild("properties/status")
+    .equalTo("marked")
+    .once('value')
+    .then(function(snapshot) {
+        var geo = {
+            "type": "FeatureCollection",
+            "features": []
+        };
+        snapshot.forEach(function(child) {
+            geo.features.push(child.val());
+        });
+        printFloodingData(geo);
+        menuIncidentes(geo);
+        // $('#loading').removeClass('spinner');
+    });
+
+
+function printFloodingData(geo) {
+    if (!map.getSource('damagedRoads')) {
+        map.addSource('damagedRoads', {
             "type": "geojson",
-            "data": {
-                "type": "Feature",
-                "properties": {},
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": [
-                        [-122.48369693756104, 37.83381888486939],
-                        [-122.48348236083984, 37.83317489144141],
-                        [-122.48339653015138, 37.83270036637107],
-                        [-122.48356819152832, 37.832056363179625],
-                        [-122.48404026031496, 37.83114119107971],
-                        [-122.48404026031496, 37.83049717427869],
-                        [-122.48348236083984, 37.829920943955045],
-                        [-122.48356819152832, 37.82954808664175],
-                        [-122.48507022857666, 37.82944639795659],
-                        [-122.48610019683838, 37.82880236636284],
-                        [-122.48695850372314, 37.82931081282506],
-                        [-122.48700141906738, 37.83080223556934],
-                        [-122.48751640319824, 37.83168351665737],
-                        [-122.48803138732912, 37.832158048267786],
-                        [-122.48888969421387, 37.83297152392784],
-                        [-122.48987674713133, 37.83263257682617],
-                        [-122.49043464660643, 37.832937629287755],
-                        [-122.49125003814696, 37.832429207817725],
-                        [-122.49163627624512, 37.832564787218985],
-                        [-122.49223709106445, 37.83337825839438],
-                        [-122.49378204345702, 37.83368330777276]
-                    ]
-                }
-            }
-        },
+            "data": geo
+        });
+    } else {
+        map.getSource('damagedRoads').setData(geo);
+    }
+    map.addLayer({
+        "id": "roads",
+        "type": "line",
+        "source": 'damagedRoads',
         "layout": {
             "line-join": "round",
             "line-cap": "round"
         },
         "paint": {
-            "line-color": "#888",
-            "line-width": 8
+            'line-color': '#693bbb',
+            "line-width": 8,
+            'line-opacity': 0.5
         }
     });
-});
+}
 
-
- function getFeatures() {
-    firebase
-      .database()
-      .ref('feature')
-      .on(
-        'value',
-        function(snapshot) {
-            snapshot.val();
-        },
-
-        function(errorObject) {
-          console.log('The read failed: ' + errorObject.code);
-        }
-      );
-  }
-
-
+function menuIncidentes(geo) {
+    for (var i = 0; i < geo.features.length; i++) {
+        geo.features[i];
+        $('#incidentes').append('<a href="#" class="list-group-item">C' + geo.features[i].properties.id + '</a>')
+    }
+}
