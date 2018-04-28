@@ -9,6 +9,11 @@ var config = {
 var OSRMHost = 'http://52.168.81.187:5000';
 // var OSRMHost = 'http://localhost:5000';
 
+var geo = {
+    "type": "FeatureCollection",
+    "features": []
+};
+
 firebase.initializeApp(config);
 var damagedRoads = [];
 mapboxgl.accessToken = 'pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36aGzR6vg';
@@ -16,20 +21,16 @@ var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
     center: [-79.02496, -8.10641],
-    zoom: 13,
-    hash: true
+    zoom: 13
 });
 map.on('load', function() {});
+
 firebase.database()
     .ref('features')
     .orderByChild("properties/status")
     .equalTo("marked")
     .once('value')
     .then(function(snapshot) {
-        var geo = {
-            "type": "FeatureCollection",
-            "features": []
-        };
         snapshot.forEach(function(child) {
             geo.features.push(child.val());
         });
@@ -62,13 +63,25 @@ function printFloodingData(geo) {
             'line-opacity': 0.5
         }
     });
+
+    
+
 }
+
+  map.on('click', 'roads', function (e) {
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        
+console.log(coordinates)
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML('description')
+            .addTo(map);
+    });
 
 function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
         var idWay = geo.features[i].properties.id.split('/')[1];
-        console.log(geo.features[i].properties)
-        $('#incidentes').append('<a href="#" class="list-group-item"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="' + idWay + '">  Calle: ' + idWay + '</a>')
+        $('#incidentes').append('<a href="#" id="way-' + idWay + '"class="list-group-item zoomtofeature"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="' + idWay + '">  Calle: ' + idWay + '</a>')
     }
 }
 
@@ -87,7 +100,7 @@ $(document).on('click', '#validar', function(e) {
         console.log(damagedRoads[i])
         firebase
             .database()
-            .ref('features/' + damagedRoads[i] +'/properties')
+            .ref('features/' + damagedRoads[i] + '/properties')
             .update({
                 status: 'validate'
             });
@@ -109,4 +122,20 @@ $(document).on('click', '#validar', function(e) {
         type: 'POST',
         url: OSRMHost + '/ignore/v1 '
     });
+});
+
+
+$(document).on('click', '.zoomtofeature', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var idWay = e.target.getAttribute('id').split('-')[1];
+    var feature;
+    for (var i = 0; i < geo.features.length; i++) {
+        if (idWay === geo.features[i].properties.id.split('/')[1]) {
+            feature = geo.features[i];
+        }
+    }
+    var bbox = turf.bbox(feature);
+    map.fitBounds(bbox);
+
 });
