@@ -1,10 +1,10 @@
 var config = {
-    apiKey: "AIzaSyDAk4WRCP4zx4JhkF2czVu4LJkzvVMN_Rg",
-    authDomain: "roads-a384c.firebaseapp.com",
-    databaseURL: "https://roads-a384c.firebaseio.com",
-    projectId: "roads-a384c",
-    storageBucket: "roads-a384c.appspot.com",
-    messagingSenderId: "1005333787675"
+    apiKey: "AIzaSyCdzFXh3lnra26ujzMqEqmRqucsu4Xwcrc",
+    authDomain: "i-data-85f05.firebaseapp.com",
+    databaseURL: "https://i-data-85f05.firebaseio.com",
+    projectId: "i-data-85f05",
+    storageBucket: "i-data-85f05.appspot.com",
+    messagingSenderId: "834555292442"
 };
 firebase.initializeApp(config);
 
@@ -25,49 +25,23 @@ var map = new mapboxgl.Map({
 
 
 
-loadGist((data) => {
-    //validateDataDB(data, (df) => {
-    //console.log(data);
-    //console.log(df);
-    /*
-     map.on('load', () => {
-     map.addLayer({
-     "id": "roads",
-     "type": "line",
-     "source": {
-     "type": "geojson",
-     "data": df
-     },
-     "layout": {
-     "line-join": "round",
-     "line-cap": "round"
-     },
-     "paint": {
-     'line-color': {
-     property: 'status',
-     type: 'categorical',
-     stops: [
-     ['marked', '#f4f0a1'],
-     ['validate', '#0ff']
-     ]
-     },
-     'line-opacity': 1,
-     "line-width": 5
-     
-     }
-     });
-     });
-     */
-    //});
-    //console.log(data_demo);
+//loadGist((data) => {    
+//    console.log("Validando");
+//    validateDataDB(data, (df) => {
+//        console.log("Pintando");
+//        updateMap(df);
+//    });
+//});
 
-    prepareData(data, data_demo.roads.way, (df) => {
-        //console.log(df);
-        updateMap(df);
+getDataDB((data) => {
+    updateMap({
+        "type": "FeatureCollection",
+        "features": data
     });
 });
-function updateMap(data) {
-    map.on('load', () => {
+
+function mapInit(data) {
+    map.on('load', function () {
         map.addLayer({
             "id": "roads",
             "type": "line",
@@ -93,29 +67,89 @@ function updateMap(data) {
 
             }
         });
+
     });
 }
+function updateMap(data) {
+    map.addLayer({
+        "id": "roads",
+        "type": "line",
+        "source": {
+            "type": "geojson",
+            "data": data
+        },
+        "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        "paint": {
+            'line-color': {
+                property: 'status',
+                type: 'categorical',
+                stops: [
+                    ['marked', '#4286f4'],
+                    ['validate', '#f44141']
+                ]
+            },
+            'line-opacity': 1,
+            "line-width": 5
+
+        }
+    });
+}
+function getDataDB(callback) {
+    firebase
+            .database()
+            .ref('features')
+            .on(
+                    'value',
+                    function (d_database) {
+                        callback(d_database.val());
+                    },
+                    function (errorObject) {
+                        console.log('The read failed: ' + errorObject.code);
+                    }
+            );
+}
+
+map.on('click', 'roads', function (e) {
+    changeStatus(e.features[0], (df) => {
+        updateMap(df);
+    });
+});
+
+function changeStatus(rd, callback) {
+    var ref = firebase.database().ref('features');
+    ref.orderByChild("properties/id").equalTo(rd.properties.id).on("child_added", function (db_feature) {
+        var r = db_feature.val();
+        try {
+            if (!r.properties.status) {
+                r.properties.status = "marked";
+                db_feature.ref.update(r);
+            } else if (r.properties.status) {
+                if (r.properties.status === 'marked') {
+                    r.properties.status = "validate";
+                    db_feature.ref.update(r);
+                }
+            }
+        } catch (e) {
+
+        }
+        callback({
+            "type": "FeatureCollection",
+            "features": [r]
+        });
+    });
+}
+
 function validateDataDB(data, callback) {
     var d_final = data;
-    //var d_features = d_final.features;
     firebase
             .database()
             .ref('roads/way')
             .on(
                     'value',
                     function (d_database) {
-
-                        /*for (var i = 0; i < d_features.length; i++) {
-                         if (d_features[i].id.startsWith("way/")) {
-                         var db_ref = d_database.val();
-                         var id_r = extractIdString(d_features[i].id);
-                         if (db_ref[id_r]) {
-                         d_features[i].properties.status = db_ref[id_r].status;
-                         d_features[i].status = db_ref[id_r].status;
-                         }
-                         }
-                         }
-                         callback(d_final);*/
                         prepareData(d_final, d_database.val(), (df) => {
                             callback(df);
                         });
@@ -174,28 +208,3 @@ function searchID(id, callback) {
             );
 }
 
-map.on('click', 'roads', function (e) {
-    //console.log(e.features);
-    //var coordinates = e.features[0].geometry.coordinates.slice();
-    var id = e.features[0].properties.id;
-    console.log(extractIdString(id));
-
-    changeStatus(extractIdString(id), (df) => {
-        updateMap(df);
-    });
-    //searchID(extractIdString(id), () => { });
-    /*
-     firebase
-     .database()
-     .ref('roads/' + id)
-     .set({
-     status: 'marked',
-     date: Date()
-     })*/
-
-
-});
-
-function changeStatus(id, callback) {
-
-}
