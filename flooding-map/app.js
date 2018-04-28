@@ -1,3 +1,22 @@
+$(document).on("click", '#crearIncidente', function () {
+    var formData = new FormData($("#formulario")[0]);
+    var ruta = "http://52.168.81.187:3021/upload";
+    $.ajax({
+        url: ruta,
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (datos) {
+            $('#form_up').hide();
+            $('#img_demo').attr('src', datos.location);
+            $('#form_prev').show();
+            updateState(localStorage.way_id, datos.location, (data) => {
+                updateMap(data);
+            });
+        }
+    });
+});
 var config = {
     apiKey: "AIzaSyCdzFXh3lnra26ujzMqEqmRqucsu4Xwcrc",
     authDomain: "i-data-85f05.firebaseapp.com",
@@ -16,22 +35,6 @@ var map = new mapboxgl.Map({
     zoom: 15,
     hash: true
 });
-/*
- map.addControl(new MapboxDirections({
- api: 'http://localhost:5000/route/v1',
- accessToken: mapboxgl.accessToken,
- unit: 'metric'
- }), 'top-left');*/
-
-
-
-//loadGist((data) => {    
-//    console.log("Validando");
-//    validateDataDB(data, (df) => {
-//        console.log("Pintando");
-//        updateMap(df);
-//    });
-//});
 
 getDataDB((data) => {
     updateMap({
@@ -40,44 +43,21 @@ getDataDB((data) => {
     });
 });
 
-function mapInit(data) {
-    map.on('load', function () {
-        map.addLayer({
-            "id": "roads",
-            "type": "line",
-            "source": {
-                "type": "geojson",
-                "data": data
-            },
-            "layout": {
-                "line-join": "round",
-                "line-cap": "round"
-            },
-            "paint": {
-                'line-color': {
-                    property: 'status',
-                    type: 'categorical',
-                    stops: [
-                        ['marked', '#4286f4'],
-                        ['validate', '#f44141']
-                    ]
-                },
-                'line-opacity': 1,
-                "line-width": 5
-
-            }
+function updateMap(data) {
+    if (!map.getSource('roadsSource')) {
+        map.addSource('roadsSource', {
+            "type": "geojson",
+            "data": data
         });
 
-    });
-}
-function updateMap(data) {
+    } else {
+        map.getSource('roadsSource').setData(data);
+    }
+
     map.addLayer({
         "id": "roads",
         "type": "line",
-        "source": {
-            "type": "geojson",
-            "data": data
-        },
+        "source": 'roadsSource',
         "layout": {
             "line-join": "round",
             "line-cap": "round"
@@ -91,8 +71,8 @@ function updateMap(data) {
                     ['validate', '#f44141']
                 ]
             },
-            'line-opacity': 1,
-            "line-width": 5
+            "line-width": 8,
+            'line-opacity': 0.3
 
         }
     });
@@ -113,47 +93,60 @@ function getDataDB(callback) {
 }
 
 map.on('click', 'roads', function (e) {
-    changeStatus(e.features[0], (df) => {
-        updateMap(df);
-    });
+    changeStatus(e);
 });
 
-function changeStatus(rd, callback) {
+map.on('mouseenter', 'roads', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+map.on('mouseleave', 'roads', function () {
+    map.getCanvas().style.cursor = '';
+});
+
+
+var p = `
+        <div id="form_up">
+            <form method="post" id="formulario" enctype="multipart/form-data">
+                Subir imagen: <input type="file" name="file">
+            </form>
+            <button id="crearIncidente">crear</button>
+        </div>
+        <div id="form_prev" style="display: none">
+            Registro correcto!!!<br/>
+            <img id="img_demo" src="" alt="Prev" height="100" width="100">
+        </div>`;
+
+
+
+function updateState(id, url, callback) {
     var ref = firebase.database().ref('features');
-    ref.orderByChild("properties/id").equalTo(rd.properties.id).on("child_added", function (db_feature) {
+    ref.orderByChild("properties/id").equalTo(id).on("child_added", function (db_feature) {
         var r = db_feature.val();
-        try {
-            if (!r.properties.status) {
-                r.properties.status = "marked";
-                db_feature.ref.update(r);
-            } else if (r.properties.status) {
-                if (r.properties.status === 'marked') {
-                    r.properties.status = "validate";
-                    db_feature.ref.update(r);
-                }
-            }
-        } catch (e) {
 
+        if (!r.properties.status) {
+            r.properties.status = "marked";
+            r.properties.img = url;
+            db_feature.ref.update(r);
         }
-        callback({
-            "type": "FeatureCollection",
-            "features": [r]
-        });
+        /*else if (r.properties.status) {
+         if (r.properties.status === 'marked') {
+         r.properties.status = "validate";
+         db_feature.ref.update(r);
+         }
+         }*/
     });
-}
 
-function validateDataDB(data, callback) {
-    var d_final = data;
     firebase
             .database()
-            .ref('roads/way')
+            .ref('features')
             .on(
                     'value',
                     function (d_database) {
-                        prepareData(d_final, d_database.val(), (df) => {
-                            callback(df);
+                        callback({
+                            "type": "FeatureCollection",
+                            "features": d_database.val()
                         });
-
                     },
                     function (errorObject) {
                         console.log('The read failed: ' + errorObject.code);
@@ -161,50 +154,20 @@ function validateDataDB(data, callback) {
             );
 }
 
-function prepareData(d_final, d_database, callback) {
-    var d_features = d_final.features;
-    for (var i = 0; i < d_features.length; i++) {
-        if (d_features[i].id.startsWith("way/")) {
-            var db_ref = d_database;
-            var id_r = extractIdString(d_features[i].id);
-            if (db_ref[id_r]) {
-                d_features[i].properties.status = db_ref[id_r].status;
-                d_features[i].status = db_ref[id_r].status;
-            }
-        }
-    }
-    callback(d_final);
-}
+function changeStatus(e) {
+    var rd = e.features[0];
+    var coordinates = [e.lngLat.lng, e.lngLat.lat];
 
-function extractIdString(ref) {
-    if (ref.startsWith("node/")) {//node/563722449
-        return ref.substring(4 + 1, ref.length);
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
-    if (ref.startsWith("way/")) {//way/563722449
-        return ref.substring(3 + 1, ref.length);
-    }
-    if (ref.startsWith("relation/")) {//relation/563722449
-        return ref.substring(8 + 1, ref.length);
-    }
-    return ref;
+    var pu = new mapboxgl.Popup();
+    pu.setHTML(p);
+    pu.on('close', function (e) {
+        console.log('Close!');
+    });
+    pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
+            .setHTML(p)
+            .addTo(map);
+    localStorage.way_id = rd.properties.id;
 }
-
-function searchID(id, callback) {
-    firebase
-            .database()
-            .ref('roads/way')
-            .on(
-                    'value',
-                    function (snapshot) {
-                        var r = snapshot.val()[id];
-                        if (r !== undefined) {
-                            console.log('Encontrado');
-                            console.log(r);
-                        }
-                    },
-                    function (errorObject) {
-                        console.log('The read failed: ' + errorObject.code);
-                    }
-            );
-}
-
