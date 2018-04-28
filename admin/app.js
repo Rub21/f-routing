@@ -1,13 +1,13 @@
 var config = {
-    apiKey: "AIzaSyCdzFXh3lnra26ujzMqEqmRqucsu4Xwcrc",
-    authDomain: "i-data-85f05.firebaseapp.com",
-    databaseURL: "https://i-data-85f05.firebaseio.com",
-    projectId: "i-data-85f05",
-    storageBucket: "i-data-85f05.appspot.com",
-    messagingSenderId: "834555292442"
+    apiKey: "AIzaSyBVJcbV9LSNh4ewiF1M9SR4eVslUNPKv_8",
+    authDomain: "i-data-project.firebaseapp.com",
+    databaseURL: "https://i-data-project.firebaseio.com",
+    projectId: "i-data-project",
+    storageBucket: "i-data-project.appspot.com",
+    messagingSenderId: "934125373941"
 };
-// var OSRMHost = 'http://52.168.81.187:5000';
-var OSRMHost = 'http://localhost:5000';
+var OSRMHost = 'http://52.168.81.187:5000';
+// var OSRMHost = 'http://localhost:5000';
 
 firebase.initializeApp(config);
 var damagedRoads = [];
@@ -19,9 +19,7 @@ var map = new mapboxgl.Map({
     zoom: 13,
     hash: true
 });
-
 map.on('load', function() {});
-
 firebase.database()
     .ref('features')
     .orderByChild("properties/status")
@@ -68,8 +66,8 @@ function printFloodingData(geo) {
 
 function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
-        geo.features[i];
         var idWay = geo.features[i].properties.id.split('/')[1];
+        console.log(geo.features[i].properties)
         $('#incidentes').append('<a href="#" class="list-group-item"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="' + idWay + '">  Calle: ' + idWay + '</a>')
     }
 }
@@ -83,9 +81,18 @@ $(document).on('click', '.selectIncident', function(e) {
     }
 });
 
-
 $(document).on('click', '#validar', function(e) {
     //save in Firebase
+    for (var i = 0; i < damagedRoads.length; i++) {
+        console.log(damagedRoads[i])
+        firebase
+            .database()
+            .ref('features/' + damagedRoads[i] +'/properties')
+            .update({
+                status: 'validate'
+            });
+    }
+    //set speed of roads
     $.ajax({
         contentType: 'application/json',
         data: JSON.stringify({
@@ -102,6 +109,4 @@ $(document).on('click', '#validar', function(e) {
         type: 'POST',
         url: OSRMHost + '/ignore/v1 '
     });
-
-
 });
