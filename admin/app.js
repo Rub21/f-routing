@@ -6,8 +6,11 @@ var config = {
     storageBucket: "i-data-85f05.appspot.com",
     messagingSenderId: "834555292442"
 };
+// var OSRMHost = 'http://52.168.81.187:5000';
+var OSRMHost = 'http://localhost:5000';
+
 firebase.initializeApp(config);
-var incidentesReportados = [];
+var damagedRoads = [];
 mapboxgl.accessToken = 'pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36aGzR6vg';
 var map = new mapboxgl.Map({
     container: 'map',
@@ -71,21 +74,34 @@ function menuIncidentes(geo) {
     }
 }
 
-
-//========> Actions
-
-$(document).on('click', '#validar', function(e) {
-
-
-});
-
 $(document).on('click', '.selectIncident', function(e) {
     var idWay = e.target.getAttribute('value');
     if ($('#' + idWay).is(":checked")) {
-        incidentesReportados.push(idWay);
+        damagedRoads.push(idWay);
     } else {
-        incidentesReportados = incidentesReportados.splice(idWay, 1);
+        damagedRoads = damagedRoads.splice(idWay, 1);
     }
-    console.log(incidentesReportados)
+});
+
+
+$(document).on('click', '#validar', function(e) {
+    //save in Firebase
+    $.ajax({
+        contentType: 'application/json',
+        data: JSON.stringify({
+            ways: damagedRoads
+        }),
+        dataType: 'json',
+        success: function(data) {
+            alert('Calles registradas como inundadas')
+        },
+        error: function() {
+            alert('Error en registrar las calles')
+        },
+        processData: false,
+        type: 'POST',
+        url: OSRMHost + '/ignore/v1 '
+    });
+
 
 });
