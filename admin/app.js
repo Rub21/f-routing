@@ -7,7 +7,7 @@ var config = {
     messagingSenderId: "834555292442"
 };
 firebase.initializeApp(config);
-
+var incidentesReportados = [];
 mapboxgl.accessToken = 'pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36aGzR6vg';
 var map = new mapboxgl.Map({
     container: 'map',
@@ -17,11 +17,7 @@ var map = new mapboxgl.Map({
     hash: true
 });
 
-map.on('load', function() {
-
-
-});
-
+map.on('load', function() {});
 
 firebase.database()
     .ref('features')
@@ -70,6 +66,26 @@ function printFloodingData(geo) {
 function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
         geo.features[i];
-        $('#incidentes').append('<a href="#" class="list-group-item">C' + geo.features[i].properties.id + '</a>')
+        var idWay = geo.features[i].properties.id.split('/')[1];
+        $('#incidentes').append('<a href="#" class="list-group-item"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="' + idWay + '">  Calle: ' + idWay + '</a>')
     }
 }
+
+
+//========> Actions
+
+$(document).on('click', '#validar', function(e) {
+
+
+});
+
+$(document).on('click', '.selectIncident', function(e) {
+    var idWay = e.target.getAttribute('value');
+    if ($('#' + idWay).is(":checked")) {
+        incidentesReportados.push(idWay);
+    } else {
+        incidentesReportados = incidentesReportados.splice(idWay, 1);
+    }
+    console.log(incidentesReportados)
+
+});
