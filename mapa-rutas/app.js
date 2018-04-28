@@ -1,13 +1,12 @@
 var config = {
-	apiKey: "AIzaSyCdzFXh3lnra26ujzMqEqmRqucsu4Xwcrc",
-	authDomain: "i-data-85f05.firebaseapp.com",
-	databaseURL: "https://i-data-85f05.firebaseio.com",
-	projectId: "i-data-85f05",
-	storageBucket: "i-data-85f05.appspot.com",
-	messagingSenderId: "834555292442"
+	apiKey: "AIzaSyBVJcbV9LSNh4ewiF1M9SR4eVslUNPKv_8",
+	authDomain: "i-data-project.firebaseapp.com",
+	databaseURL: "https://i-data-project.firebaseio.com",
+	projectId: "i-data-project",
+	storageBucket: "i-data-project.appspot.com",
+	messagingSenderId: "934125373941"
 };
 firebase.initializeApp(config);
-
 mapboxgl.accessToken = 'pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36aGzR6vg';
 var map = new mapboxgl.Map({
 	container: 'map',
