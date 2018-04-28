@@ -12,18 +12,26 @@ $(document).on("click", '#crearIncidente', function () {
             $('#img_demo').attr('src', datos.location);
             $('#form_prev').show();
             updateState(localStorage.way_id, datos.location, (data) => {
-                updateMap(data);
+                var geo = {
+                    "type": "FeatureCollection",
+                    "features": []
+                };
+                $.each(data, function (k, v) {
+                    geo.features.push(v);
+                });
+
+                updateMap(geo);
             });
         }
     });
 });
 var config = {
-    apiKey: "AIzaSyCdzFXh3lnra26ujzMqEqmRqucsu4Xwcrc",
-    authDomain: "i-data-85f05.firebaseapp.com",
-    databaseURL: "https://i-data-85f05.firebaseio.com",
-    projectId: "i-data-85f05",
-    storageBucket: "i-data-85f05.appspot.com",
-    messagingSenderId: "834555292442"
+    apiKey: "AIzaSyBVJcbV9LSNh4ewiF1M9SR4eVslUNPKv_8",
+    authDomain: "i-data-project.firebaseapp.com",
+    databaseURL: "https://i-data-project.firebaseio.com",
+    projectId: "i-data-project",
+    storageBucket: "i-data-project.appspot.com",
+    messagingSenderId: "934125373941"
 };
 firebase.initializeApp(config);
 
@@ -37,10 +45,15 @@ var map = new mapboxgl.Map({
 });
 
 getDataDB((data) => {
-    updateMap({
+    var geo = {
         "type": "FeatureCollection",
-        "features": data
+        "features": []
+    };
+    $.each(data, function (k, v) {
+        geo.features.push(v);
     });
+
+    updateMap(geo);
 });
 
 function updateMap(data) {
@@ -120,21 +133,14 @@ var p = `
 
 
 function updateState(id, url, callback) {
-    var ref = firebase.database().ref('features');
-    ref.orderByChild("properties/id").equalTo(id).on("child_added", function (db_feature) {
+    var ref = firebase.database().ref('features/' + id.split('/')[1]);
+    ref.on('value', function (db_feature) {
         var r = db_feature.val();
-
         if (!r.properties.status) {
             r.properties.status = "marked";
             r.properties.img = url;
-            db_feature.ref.update(r);
+            ref.update(r);
         }
-        /*else if (r.properties.status) {
-         if (r.properties.status === 'marked') {
-         r.properties.status = "validate";
-         db_feature.ref.update(r);
-         }
-         }*/
     });
 
     firebase
@@ -143,10 +149,7 @@ function updateState(id, url, callback) {
             .on(
                     'value',
                     function (d_database) {
-                        callback({
-                            "type": "FeatureCollection",
-                            "features": d_database.val()
-                        });
+                        callback(d_database.val());
                     },
                     function (errorObject) {
                         console.log('The read failed: ' + errorObject.code);
