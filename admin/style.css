@@ -1,117 +1,114 @@
        body {
-       margin: 0;
-       padding: 0;
-   }
+           margin: 0;
+           padding: 0;
+       }
 
-   #map {
-       /*position: absolute;*/
-       /*   top: 0;
-       bottom: 0;*/
-       width: 100%;
-       height: 100%;
-   }
+       #map {
+           position: absolute;
+           top: 0;
+           bottom: 0;
+           width: 100%;
+           height: 100%;
+       }
 
-   .listIncidentes {
-       position: absolute;
-       left: 5px;
-       top: 80px;
-       z-index: 999;
-       color: #fff;
-       width: 250px;
-       padding: 10px;
-   }
-
-
-   .navfix h1 {
-       text-transform: uppercase;
-   }
-
-   .navfix {
-       position: absolute;
-       width: 100%;
-       height: 70px;
-       z-index: 999;
-       line-height: 70px;
-       padding-left: 20px
-   }
-
-   .slogan {
-       position: relative;
-       top: -25px;
-   }
-
-   .mapboxgl-ctrl-top-left {
-       margin-top: 70px;
-   }
-
-   .pill {
-       position: absolute;
-       top: 80px;
-       z-index: 999;
-       right: 5px;
-   }
+       .listIncidentes {
+           position: absolute;
+           left: 5px;
+           top: 80px;
+           z-index: 999;
+           color: #fff;
+           width: 250px;
+           padding: 10px;
+       }
 
 
-   /*login*/
+       .navfix h1 {
+           text-transform: uppercase;
+       }
 
-   @import "bourbon";
-.lock{
+       .navfix {
+           position: absolute;
+           width: 100%;
+           height: 70px;
+           z-index: 999;
+           line-height: 70px;
+           padding-left: 20px
+       }
 
-  position: absolute;
-  top: 0;
-  z-index: 99999999;
-  width: 100%;
-  height:100%;
-  background: rgba(4, 4, 4, 1);
-}
-/*body {
+       .slogan {
+           position: relative;
+           top: -25px;
+       }
+
+       .mapboxgl-ctrl-top-left {
+           margin-top: 70px;
+       }
+
+       .pill {
+           position: absolute;
+           top: 80px;
+           z-index: 999;
+           right: 5px;
+       }
+       /*login*/
+
+       @import "bourbon";
+       .lock {
+
+           position: absolute;
+           top: 0;
+           z-index: 99999999;
+           width: 100%;
+           height: 100%;
+           background: rgba(4, 4, 4, 1);
+       }
+       /*body {
   background: #eee !important;  
 }
 */
-.wrapper {  
-  margin-top: 80px;
-  margin-bottom: 80px;
-}
 
-.form-signin {
-  max-width: 380px;
-  padding: 15px 35px 45px;
-  margin: 0 auto;
-  background-color: #fff;
-  border: 1px solid rgba(0,0,0,0.1);  
+       .wrapper {
+           margin-top: 80px;
+           margin-bottom: 80px;
+       }
 
-  .form-signin-heading,
-  .checkbox {
-    margin-bottom: 30px;
-  }
+       .form-signin {
+           max-width: 380px;
+           padding: 15px 35px 45px;
+           margin: 0 auto;
+           background-color: #fff;
+           border: 1px solid rgba(0, 0, 0, 0.1);
 
-  .checkbox {
-    font-weight: normal;
-  }
+           .form-signin-heading,
+           .checkbox {
+               margin-bottom: 30px;
+           }
 
-  .form-control {
-    position: relative;
-    font-size: 16px;
-    height: auto;
-    padding: 10px;
-    @include box-sizing(border-box);
+           .checkbox {
+               font-weight: normal;
+           }
 
-    &:focus {
-      z-index: 2;
-    }
-  }
+           .form-control {
+               position: relative;
+               font-size: 16px;
+               height: auto;
+               padding: 10px;
+               @include box-sizing(border-box);
 
-  input[type="text"] {
-    margin-bottom: -1px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
+               &:focus {
+                   z-index: 2;
+               }
+           }
 
-  input[type="password"] {
-    margin-bottom: 20px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-}
+           input[type="text"] {
+               margin-bottom: -1px;
+               border-bottom-left-radius: 0;
+               border-bottom-right-radius: 0;
+           }
 
-
+           input[type="password"] {
+               margin-bottom: 20px;
+               border-top-left-radius: 0;
+               border-top-right-radius: 0;
+           }
+       }

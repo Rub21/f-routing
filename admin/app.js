@@ -8,7 +8,6 @@ var config = {
 };
 var OSRMHost = 'http://52.168.81.187:5000';
 // var OSRMHost = 'http://localhost:5000';
-
 var geo = {
     "type": "FeatureCollection",
     "features": []
@@ -22,6 +21,10 @@ var map = new mapboxgl.Map({
     style: 'mapbox://styles/mapbox/satellite-streets-v9',
     center: [-79.02496, -8.10641],
     zoom: 13
+});
+
+map.on('load', function() {
+    map.resize();
 });
 
 map.on('mouseenter', 'roads', function() {
@@ -65,7 +68,7 @@ function printFloodingData(geo) {
         "paint": {
             'line-color': '#693bbb',
             "line-width": 8,
-            'line-opacity': 1
+            'line-opacity': 0.5
         }
     });
 }
@@ -108,7 +111,6 @@ $(document).on('click', '.selectIncident', function(e) {
     } else {
         damagedRoads = damagedRoads.splice(idWay, 1);
     }
-    console.log(damagedRoads)
 });
 
 $(document).on('click', '#validar', function(e) {
