@@ -38,7 +38,7 @@ firebase.database()
         .once('value')
         .then(function (snapshot) {
             snapshot.forEach(function (child) {
-                console.log(child.val());
+                //console.log(child.val());
                 geo.features.push(child.val());
             });            
             menuIncidentes(geo);
@@ -69,19 +69,19 @@ function printFloodingData(geo) {
             'line-opacity': 0.5
         }
     });
-
-
-
 }
 
 map.on('click', 'roads', function (e) {
-    var pu = new mapboxgl.Popup();
-    pu.on('close', function (e) {
-        console.log('Close!');
-    });
+    var pu = new mapboxgl.Popup(); 
     pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
-            .setHTML("<div>Demo</div>")
+            .setHTML(`<img id="img_demo" src="" alt="Prev" width="300">`)
             .addTo(map);
+    
+    var ref = firebase.database().ref('features/' + e.features[0].properties.id.split('/')[1]);
+    ref.on('value', function (db_feature) {
+        var r = db_feature.val();
+        $('#img_demo').attr('src',r.properties.img);
+    });
 });
 
 map.on('mouseenter', 'roads', function () {
