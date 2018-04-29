@@ -83,7 +83,7 @@ function updateMap(data) {
                 property: 'status',
                 type: 'categorical',
                 stops: [
-                    ['marked', '#4286f4'],
+                    ['marked', '#693bbb'],
                     ['validate', '#f44141']
                 ],
                 "default": "#ddd"

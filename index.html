@@ -10,8 +10,7 @@
     <link href="rutas/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
-    <link href="rutas/css/grayscale.css" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
+    <link href="rutas/css/grayscale.css" rel="stylesheet">    
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.1/mapbox-gl-directions.css' type='text/css' />
@@ -43,6 +42,17 @@
     </nav>
     <div id="map">
     </div>
+     <div class="map-overlay" id="legend">            
+            <table>
+                <tr>
+                    <th colspan="1">Leyenda</th>
+                </tr>
+                <tr>
+                    <td><div id="ci"></div></td>
+                    <td>Calle Inundada</td>
+                </tr>
+            </table>
+        </div>
     <script src="rutas/vendor/jquery/jquery.min.js"></script>
     <script src="rutas/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="rutas/vendor/jquery-easing/jquery.easing.min.js"></script>
