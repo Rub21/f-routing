@@ -123,11 +123,11 @@ var p = `
             <form method="post" id="formulario" enctype="multipart/form-data">
                 Subir imagen: <input type="file" name="file">
             </form>
-            <button id="crearIncidente">crear</button>
+            <button id="crearIncidente">Reportar calle inundada</button>
         </div>
         <div id="form_prev" style="display: none">
-            Registro correcto!!!<br/>
-            <img id="img_demo" src="" alt="Prev" height="100" width="100">
+            <h3>Se registró la calle inundada</h3><br/>
+            <img id="img_demo" src="" alt="Prev" width="300">
         </div>`;
 
 

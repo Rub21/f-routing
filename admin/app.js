@@ -96,15 +96,15 @@ $(document).on('click', '.selectIncident', function(e) {
 
 $(document).on('click', '#validar', function(e) {
     //save in Firebase
-    for (var i = 0; i < damagedRoads.length; i++) {
-        console.log(damagedRoads[i])
-        firebase
-            .database()
-            .ref('features/' + damagedRoads[i] + '/properties')
-            .update({
-                status: 'validate'
-            });
-    }
+    // for (var i = 0; i < damagedRoads.length; i++) {
+    //     console.log(damagedRoads[i])
+    //     firebase
+    //         .database()
+    //         .ref('features/' + damagedRoads[i] + '/properties')
+    //         .update({
+    //             status: 'validate'
+    //         });
+    // }
     //set speed of roads
     $.ajax({
         contentType: 'application/json',
@@ -115,9 +115,9 @@ $(document).on('click', '#validar', function(e) {
         success: function(data) {
             alert('Calles registradas como inundadas')
         },
-        error: function() {
-            alert('Error en registrar las calles')
-        },
+        // error: function() {
+        //     alert('Error en registrar las calles')
+        // },
         processData: false,
         type: 'POST',
         url: OSRMHost + '/ignore/v1 '
@@ -125,17 +125,17 @@ $(document).on('click', '#validar', function(e) {
 });
 
 
-$(document).on('click', '.zoomtofeature', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var idWay = e.target.getAttribute('id').split('-')[1];
-    var feature;
-    for (var i = 0; i < geo.features.length; i++) {
-        if (idWay === geo.features[i].properties.id.split('/')[1]) {
-            feature = geo.features[i];
-        }
-    }
-    var bbox = turf.bbox(feature);
-    map.fitBounds(bbox);
+// $(document).on('click', '.zoomtofeature', function(e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     var idWay = e.target.getAttribute('id').split('-')[1];
+//     var feature;
+//     for (var i = 0; i < geo.features.length; i++) {
+//         if (idWay === geo.features[i].properties.id.split('/')[1]) {
+//             feature = geo.features[i];
+//         }
+//     }
+//     var bbox = turf.bbox(feature);
+//     map.fitBounds(bbox);
 
-});
+// });

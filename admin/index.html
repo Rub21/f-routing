@@ -13,27 +13,35 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+    <link href='https://mapbox.com/base/latest/base.css' rel='stylesheet' />
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container listIncidentes">
+    <!-- header -->
+    <div class='col12 clearfix '>
+        <div class='fill-navy dark navfix'>
+            <h1> Verificar Calles inundadas</h1>
+        </div>
+    </div>
+    <div class='pill'>
+        <a href='/' class='button'>Ver mapa de rutas alternas</a>
+        <a href='/flooding-map' class='button'>Registrar calles inundadas</a>
+    </div>
+    <!-- end header -->
+    <div class="container listIncidentes fill-navy">
         <div class="row">
-            <div class="col-lg-3">
-                                    <h5 class="my-4">Calles inundadas</h5>
-                
+            <div class="col-lg-12">
+                <h3 class="my-4">Calles inundadas</h3>
                 <div id='incidentes' class="list-group">
-
                 </div>
-                <button  id="validar" type="button" class="btn btn-danger">Validar calles como inundadas</button>
+                <button id="validar" type="button" class="btn btn-danger">Validar calles como inundadas</button>
             </div>
         </div>
     </div>
-
     <div id='map'>
-                </div>
-
+    </div>
     <script src='app.js'></script>
 </body>
 
