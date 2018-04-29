@@ -109,32 +109,32 @@ $(document).on('click', '.selectIncident', function (e) {
 });
 
 $(document).on('click', '#validar', function (e) {
-//    for (var i = 0; i < damagedRoads.length; i++) {
-//        console.log(damagedRoads[i])
-//        firebase
-//                .database()
-//                .ref('features/' + damagedRoads[i] + '/properties')
-//                .update({
-//                    status: 'validate'
-//                });
-//    }
-//    //set speed of roads
-//    $.ajax({
-//        contentType: 'application/json',
-//        data: JSON.stringify({
-//            ways: damagedRoads
-//        }),
-//        dataType: 'json',
-//        success: function (data) {
-//            alert('Calles registradas como inundadas')
-//        },
-//        error: function () {
-//            alert('Error en registrar las calles')
-//        },
-//        processData: false,
-//        type: 'POST',
-//        url: OSRMHost + '/ignore/v1 '
-//    });
+    for (var i = 0; i < damagedRoads.length; i++) {
+        console.log(damagedRoads[i])
+        firebase
+                .database()
+                .ref('features/' + damagedRoads[i] + '/properties')
+                .update({
+                    status: 'validate'
+                });
+    }
+    //set speed of roads
+    $.ajax({
+        contentType: 'application/json',
+        data: JSON.stringify({
+            ways: damagedRoads
+        }),
+        dataType: 'json',
+        success: function (data) {
+            alert('Calles registradas como inundadas')
+        },
+        error: function () {
+            alert('Error en registrar las calles')
+        },
+        processData: false,
+        type: 'POST',
+        url: OSRMHost + '/ignore/v1 '
+    });
 });
 
 $(document).on('click', '.selectIncident', function (e) {
