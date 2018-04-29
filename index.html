@@ -1,34 +1,52 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset='utf-8' />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
     <title>Mapa de rutas alternas en caso de inundaciones</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="rutas/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="rutas/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+    <link href="rutas/css/grayscale.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
-    <script src='mapbox-gl-directions.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.1/mapbox-gl-directions.css' type='text/css' />
-    <link rel='stylesheet' href='style.css' type='text/css' />
     <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src='rutas/mapbox-gl-directions.js'></script>
+    <link rel='stylesheet' href='rutas/style.css' type='text/css' />
     <link href='https://mapbox.com/base/latest/base.css' rel='stylesheet' />
 </head>
 
-<body>
-    <div class='col12 clearfix '>
-        <div class='fill-navy dark navfix'>
-            <h1> Mapa de rutas alternas en caso de inundaciones</h1>
-            <div class="slogan">Consigue la mejor ruta alterna en caso de inundaciones!</div>
+<body id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">Mapa de rutas alternas en caso de inundaciones</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/registrar">Registra calle inundada</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/admin">Admin</a>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
+    <div id="map">
     </div>
-    <div class='pill'>
-        <a href='/registrar' class='button'>Registra una calle inundada</a>
-        <a href='/admin' class='button'>Admin</a>
-    </div>
-    <div id="loading" class="spinner"></div>
-    <div id='map'></div>
-    <script src='app.js'></script>
+    <script src="rutas/vendor/jquery/jquery.min.js"></script>
+    <script src="rutas/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="rutas/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="rutas/app.js"></script>
 </body>
 
 </html>
