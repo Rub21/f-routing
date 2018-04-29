@@ -24,26 +24,25 @@ var map = new mapboxgl.Map({
     zoom: 13
 });
 
-map.on('mouseenter', 'roads', function () {
+map.on('mouseenter', 'roads', function() {
     map.getCanvas().style.cursor = 'pointer';
 });
 
-map.on('mouseleave', 'roads', function () {
+map.on('mouseleave', 'roads', function() {
     map.getCanvas().style.cursor = '';
 });
 firebase.database()
-        .ref('features')
-        .orderByChild("properties/status")
-        .equalTo("marked")
-        .once('value')
-        .then(function (snapshot) {
-            snapshot.forEach(function (child) {
-                //console.log(child.val());
-                geo.features.push(child.val());
-            });            
-            menuIncidentes(geo);
-            printFloodingData(geo);
+    .ref('features')
+    .orderByChild("properties/status")
+    .equalTo("marked")
+    .once('value')
+    .then(function(snapshot) {
+        snapshot.forEach(function(child) {
+            geo.features.push(child.val());
         });
+        menuIncidentes(geo);
+        printFloodingData(geo);
+    });
 
 
 function printFloodingData(geo) {
@@ -66,57 +65,61 @@ function printFloodingData(geo) {
         "paint": {
             'line-color': '#693bbb',
             "line-width": 8,
-            'line-opacity': 0.5
+            'line-opacity': 1
         }
     });
 }
 
-map.on('click', 'roads', function (e) {
-    var pu = new mapboxgl.Popup(); 
+map.on('click', 'roads', function(e) {
+    var pu = new mapboxgl.Popup();
     pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
-            .setHTML(`<img id="img_demo" src="" alt="Prev" width="800">`)
-            .addTo(map);
-    
+        .setHTML(`<img id="img_demo" src="" alt="Prev" width="800">`)
+        .addTo(map);
+
     var ref = firebase.database().ref('features/' + e.features[0].properties.id.split('/')[1]);
-    ref.on('value', function (db_feature) {
+    ref.on('value', function(db_feature) {
         var r = db_feature.val();
-        $('#img_demo').attr('src',r.properties.img);
+        $('#img_demo').attr('src', r.properties.img);
     });
 });
 
-map.on('mouseenter', 'roads', function () {
+map.on('mouseenter', 'roads', function() {
     map.getCanvas().style.cursor = 'pointer';
 });
 
-map.on('mouseleave', 'roads', function () {
+map.on('mouseleave', 'roads', function() {
     map.getCanvas().style.cursor = '';
 });
 
 function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
         var idWay = geo.features[i].properties.id.split('/')[1];
-        $('#incidentes').append('<a href="#" id="way-' + idWay + '"class="list-group-item zoomtofeature"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="way-' + idWay + '"/>  Calle: ' + idWay + '</a>')
+        $('#incidentes').append('<a href="#" id="way-' + idWay + '"class="list-group-item zoomtofeature">' +
+            '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
+            ' Calle: ' + idWay + '</a>')
     }
 }
 
-$(document).on('click', '.selectIncident', function (e) {
-    var idWay = e.target.getAttribute('value');
-    if ($('#' + idWay).is(":checked")) {
+$(document).on('click', '.selectIncident', function(e) {
+    var idWay = e.target.getAttribute('value').split('-')[1];
+    console.log(idWay)
+    if ($('#w-' + idWay).is(":checked")) {
         damagedRoads.push(idWay);
     } else {
         damagedRoads = damagedRoads.splice(idWay, 1);
     }
+    console.log(damagedRoads)
 });
 
-$(document).on('click', '#validar', function (e) {
+$(document).on('click', '#validar', function(e) {
     for (var i = 0; i < damagedRoads.length; i++) {
         console.log(damagedRoads[i])
         firebase
-                .database()
-                .ref('features/' + damagedRoads[i] + '/properties')
-                .update({
-                    status: 'validate'
-                });
+            .database()
+            .ref('features/' + damagedRoads[i] + '/properties')
+            .update({
+                status: 'validate'
+            });
     }
     //set speed of roads
     $.ajax({
@@ -125,11 +128,11 @@ $(document).on('click', '#validar', function (e) {
             ways: damagedRoads
         }),
         dataType: 'json',
-        success: function (data) {
+        success: function(data) {
             alert('Calles registradas como inundadas')
         },
-        error: function () {
-            alert('Error en registrar las calles')
+        error: function() {
+            alert('Re-procesar las calles tomara unos minutos')
         },
         processData: false,
         type: 'POST',
@@ -137,14 +140,14 @@ $(document).on('click', '#validar', function (e) {
     });
 });
 
-$(document).on('click', '.selectIncident', function (e) {
-       zoomHighway(e);
+$(document).on('click', '.selectIncident', function(e) {
+    zoomHighway(e);
 });
-$(document).on('click', '.zoomtofeature', function (e) {
-       zoomHighway(e);
+$(document).on('click', '.zoomtofeature', function(e) {
+    zoomHighway(e);
 });
 
-function zoomHighway(e){
+function zoomHighway(e) {
     var idWay = e.target.getAttribute('id').split('-')[1];
     var feature;
     for (var i = 0; i < geo.features.length; i++) {
@@ -155,3 +158,9 @@ function zoomHighway(e){
     var bbox = turf.bbox(feature);
     map.fitBounds(bbox);
 }
+
+$(document).on('click', '#btnAccess', function(e) {
+    if ($('#fieldUser').val() === 'admin' && $('#fieldPassword').val() === 'admin') {
+        $('.lock').parent().remove();
+    }
+})

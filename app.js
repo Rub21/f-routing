@@ -10,7 +10,7 @@ firebase.initializeApp(config);
 mapboxgl.accessToken = 'pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36aGzR6vg';
 var map = new mapboxgl.Map({
 	container: 'map',
-	style: 'mapbox://styles/mapbox/satellite-streets-v9',
+	style: 'mapbox://styles/mapbox/streets-v9',
 	center: [-79.02496, -8.10641],
 	zoom: 13,
 	hash: true
@@ -41,6 +41,7 @@ firebase.database()
 	});
 
 function printFloodingData(geo) {
+	console.log(geo)
 	if (!map.getSource('damagedRoads')) {
 		map.addSource('damagedRoads', {
 			"type": "geojson",

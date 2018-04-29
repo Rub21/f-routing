@@ -38,7 +38,7 @@ firebase.initializeApp(config);
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGV2c2VlZCIsImEiOiJnUi1mbkVvIn0.018aLhX0Mb0tdtaT2QNe2Q';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/satellite-streets-v9',
+    style: 'mapbox://styles/mapbox/streets-v9',
     center: [-79.00946, -8.10773],
     zoom: 15,
     hash: true
