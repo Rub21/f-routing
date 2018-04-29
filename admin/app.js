@@ -23,21 +23,27 @@ var map = new mapboxgl.Map({
     center: [-79.02496, -8.10641],
     zoom: 13
 });
-map.on('load', function() {});
 
+map.on('mouseenter', 'roads', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+map.on('mouseleave', 'roads', function () {
+    map.getCanvas().style.cursor = '';
+});
 firebase.database()
-    .ref('features')
-    .orderByChild("properties/status")
-    .equalTo("marked")
-    .once('value')
-    .then(function(snapshot) {
-        snapshot.forEach(function(child) {
-            geo.features.push(child.val());
+        .ref('features')
+        .orderByChild("properties/status")
+        .equalTo("marked")
+        .once('value')
+        .then(function (snapshot) {
+            snapshot.forEach(function (child) {
+                console.log(child.val());
+                geo.features.push(child.val());
+            });            
+            menuIncidentes(geo);
+            printFloodingData(geo);
         });
-        printFloodingData(geo);
-        menuIncidentes(geo);
-        // $('#loading').removeClass('spinner');
-    });
 
 
 function printFloodingData(geo) {
@@ -64,28 +70,36 @@ function printFloodingData(geo) {
         }
     });
 
-    
+
 
 }
 
-  map.on('click', 'roads', function (e) {
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        
-console.log(coordinates)
-        new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML('description')
-            .addTo(map);
+map.on('click', 'roads', function (e) {
+    var pu = new mapboxgl.Popup();
+    pu.on('close', function (e) {
+        console.log('Close!');
     });
+    pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
+            .setHTML("<div>Demo</div>")
+            .addTo(map);
+});
+
+map.on('mouseenter', 'roads', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+map.on('mouseleave', 'roads', function () {
+    map.getCanvas().style.cursor = '';
+});
 
 function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
         var idWay = geo.features[i].properties.id.split('/')[1];
-        $('#incidentes').append('<a href="#" id="way-' + idWay + '"class="list-group-item zoomtofeature"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="' + idWay + '">  Calle: ' + idWay + '</a>')
+        $('#incidentes').append('<a href="#" id="way-' + idWay + '"class="list-group-item zoomtofeature"> <input class="selectIncident" name="waySelected" type="checkbox" value="' + idWay + '" id="way-' + idWay + '"/>  Calle: ' + idWay + '</a>')
     }
 }
 
-$(document).on('click', '.selectIncident', function(e) {
+$(document).on('click', '.selectIncident', function (e) {
     var idWay = e.target.getAttribute('value');
     if ($('#' + idWay).is(":checked")) {
         damagedRoads.push(idWay);
@@ -94,48 +108,50 @@ $(document).on('click', '.selectIncident', function(e) {
     }
 });
 
-$(document).on('click', '#validar', function(e) {
-    //save in Firebase
-    // for (var i = 0; i < damagedRoads.length; i++) {
-    //     console.log(damagedRoads[i])
-    //     firebase
-    //         .database()
-    //         .ref('features/' + damagedRoads[i] + '/properties')
-    //         .update({
-    //             status: 'validate'
-    //         });
-    // }
-    //set speed of roads
-    $.ajax({
-        contentType: 'application/json',
-        data: JSON.stringify({
-            ways: damagedRoads
-        }),
-        dataType: 'json',
-        success: function(data) {
-            alert('Calles registradas como inundadas')
-        },
-        // error: function() {
-        //     alert('Error en registrar las calles')
-        // },
-        processData: false,
-        type: 'POST',
-        url: OSRMHost + '/ignore/v1 '
-    });
+$(document).on('click', '#validar', function (e) {
+//    for (var i = 0; i < damagedRoads.length; i++) {
+//        console.log(damagedRoads[i])
+//        firebase
+//                .database()
+//                .ref('features/' + damagedRoads[i] + '/properties')
+//                .update({
+//                    status: 'validate'
+//                });
+//    }
+//    //set speed of roads
+//    $.ajax({
+//        contentType: 'application/json',
+//        data: JSON.stringify({
+//            ways: damagedRoads
+//        }),
+//        dataType: 'json',
+//        success: function (data) {
+//            alert('Calles registradas como inundadas')
+//        },
+//        error: function () {
+//            alert('Error en registrar las calles')
+//        },
+//        processData: false,
+//        type: 'POST',
+//        url: OSRMHost + '/ignore/v1 '
+//    });
 });
 
+$(document).on('click', '.selectIncident', function (e) {
+       zoomHighway(e);
+});
+$(document).on('click', '.zoomtofeature', function (e) {
+       zoomHighway(e);
+});
 
-// $(document).on('click', '.zoomtofeature', function(e) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     var idWay = e.target.getAttribute('id').split('-')[1];
-//     var feature;
-//     for (var i = 0; i < geo.features.length; i++) {
-//         if (idWay === geo.features[i].properties.id.split('/')[1]) {
-//             feature = geo.features[i];
-//         }
-//     }
-//     var bbox = turf.bbox(feature);
-//     map.fitBounds(bbox);
-
-// });
+function zoomHighway(e){
+    var idWay = e.target.getAttribute('id').split('-')[1];
+    var feature;
+    for (var i = 0; i < geo.features.length; i++) {
+        if (idWay === geo.features[i].properties.id.split('/')[1]) {
+            feature = geo.features[i];
+        }
+    }
+    var bbox = turf.bbox(feature);
+    map.fitBounds(bbox);
+}
