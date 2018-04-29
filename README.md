@@ -1,3 +1,3 @@
-# Mapa de rutas
+# RAIT => Rutas Alterna en caso de Inundación - Trujillo
 
-Este el mapa que permite mostrar la rutas de transporte que estan disponibles en casos de inundacion en Trujillo.
+Descubre las rutas alternas en caso de inundación, Tambien puede reportar la calles inundadas
