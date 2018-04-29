@@ -79,3 +79,7 @@ body {
     z-index: 999;
     right: 5px;
 }
+
+.mapbox-directions-profile{
+    display: none;
+}

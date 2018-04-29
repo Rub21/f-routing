@@ -1,4 +1,4 @@
-$(document).on("click", '#crearIncidente', function () {
+$(document).on("click", '#crearIncidente', function() {
     var formData = new FormData($("#formulario")[0]);
     var ruta = "http://52.168.81.187:3021/upload";
     $.ajax({
@@ -7,7 +7,7 @@ $(document).on("click", '#crearIncidente', function () {
         data: formData,
         contentType: false,
         processData: false,
-        success: function (datos) {
+        success: function(datos) {
             $('#form_up').hide();
             $('#img_demo').attr('src', datos.location);
             $('#form_prev').show();
@@ -16,7 +16,7 @@ $(document).on("click", '#crearIncidente', function () {
                     "type": "FeatureCollection",
                     "features": []
                 };
-                $.each(data, function (k, v) {
+                $.each(data, function(k, v) {
                     geo.features.push(v);
                 });
 
@@ -38,7 +38,7 @@ firebase.initializeApp(config);
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGV2c2VlZCIsImEiOiJnUi1mbkVvIn0.018aLhX0Mb0tdtaT2QNe2Q';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v9',
+    style: 'mapbox://styles/mapbox/satellite-streets-v9',
     center: [-79.00946, -8.10773],
     zoom: 15,
     hash: true
@@ -49,7 +49,7 @@ getDataDB((data) => {
         "type": "FeatureCollection",
         "features": []
     };
-    $.each(data, function (k, v) {
+    $.each(data, function(k, v) {
         geo.features.push(v);
     });
 
@@ -82,38 +82,40 @@ function updateMap(data) {
                 stops: [
                     ['marked', '#4286f4'],
                     ['validate', '#f44141']
-                ]
-            },
-            "line-width": 8,
-            'line-opacity': 0.3
+                ],
+                "default": "#ddd"
 
+            },
+            "line-width": 12,
+            'line-opacity': 0.5
         }
     });
 }
+
 function getDataDB(callback) {
     firebase
-            .database()
-            .ref('features')
-            .on(
-                    'value',
-                    function (d_database) {
-                        callback(d_database.val());
-                    },
-                    function (errorObject) {
-                        console.log('The read failed: ' + errorObject.code);
-                    }
-            );
+        .database()
+        .ref('features')
+        .on(
+            'value',
+            function(d_database) {
+                callback(d_database.val());
+            },
+            function(errorObject) {
+                console.log('The read failed: ' + errorObject.code);
+            }
+        );
 }
 
-map.on('click', 'roads', function (e) {
+map.on('click', 'roads', function(e) {
     changeStatus(e);
 });
 
-map.on('mouseenter', 'roads', function () {
+map.on('mouseenter', 'roads', function() {
     map.getCanvas().style.cursor = 'pointer';
 });
 
-map.on('mouseleave', 'roads', function () {
+map.on('mouseleave', 'roads', function() {
     map.getCanvas().style.cursor = '';
 });
 
@@ -134,7 +136,7 @@ var p = `
 
 function updateState(id, url, callback) {
     var ref = firebase.database().ref('features/' + id.split('/')[1]);
-    ref.on('value', function (db_feature) {
+    ref.on('value', function(db_feature) {
         var r = db_feature.val();
         if (!r.properties.status) {
             r.properties.status = "marked";
@@ -144,17 +146,17 @@ function updateState(id, url, callback) {
     });
 
     firebase
-            .database()
-            .ref('features')
-            .on(
-                    'value',
-                    function (d_database) {
-                        callback(d_database.val());
-                    },
-                    function (errorObject) {
-                        console.log('The read failed: ' + errorObject.code);
-                    }
-            );
+        .database()
+        .ref('features')
+        .on(
+            'value',
+            function(d_database) {
+                callback(d_database.val());
+            },
+            function(errorObject) {
+                console.log('The read failed: ' + errorObject.code);
+            }
+        );
 }
 
 function changeStatus(e) {
@@ -166,11 +168,11 @@ function changeStatus(e) {
     }
     var pu = new mapboxgl.Popup();
     pu.setHTML(p);
-    pu.on('close', function (e) {
+    pu.on('close', function(e) {
         console.log('Close!');
     });
     pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
-            .setHTML(p)
-            .addTo(map);
+        .setHTML(p)
+        .addTo(map);
     localStorage.way_id = rd.properties.id;
 }
