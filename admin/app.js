@@ -149,25 +149,7 @@ $(document).on('click', '#validar', function(e) {
                 status: 'validate'
             });
     }
-    setTimeout(function() {
-        $.ajax({
-            contentType: 'application/json',
-            data: JSON.stringify({
-                ways: damagedRoads
-            }),
-            dataType: 'json',
-            success: function(data) {
-                alert('Re-procesar las calles tomara unos minutos')
-            },
-            processData: false,
-            type: 'POST',
-            url: OSRMHost + '/ignore/v1 '
-        });
-        setTimeout(function() {
-            alert('Re-procesar las calles tomara unos minutos!')
-            location.reload();
-        }, 200);
-    }, 200);
+    reRoute(damagedRoads);
 });
 
 
@@ -188,6 +170,19 @@ $(document).on('click', '#invalidar', function(e) {
 
 });
 
+
+$(document).on('click', '#limpiarCalles', function(e) {
+    for (var i = 0; i < damagedRoads.length; i++) {
+        // console.log(damagedRoads[i])
+        firebase
+            .database()
+            .ref('features/' + damagedRoads[i] + '/properties')
+            .update({
+                status: null
+            });
+    }
+    reRoute(damagedRoads);
+});
 
 $(document).on('click', '.selectIncident', function(e) {
     var idWay = e.target.getAttribute('id').split('-')[1];
@@ -221,3 +216,26 @@ $(document).on('click', '#btnAccess', function(e) {
         $('.lock').parent().remove();
     }
 });
+
+
+function reRoute(damagedRoads) {
+    setTimeout(function() {
+        $.ajax({
+            contentType: 'application/json',
+            data: JSON.stringify({
+                ways: damagedRoads
+            }),
+            dataType: 'json',
+            success: function(data) {
+                alert('Re-procesar las calles tomara unos minutos')
+            },
+            processData: false,
+            type: 'POST',
+            url: OSRMHost + '/ignore/v1 '
+        });
+        setTimeout(function() {
+            alert('Re-procesar las calles tomara unos minutos!')
+            location.reload();
+        }, 200);
+    }, 200);
+}
