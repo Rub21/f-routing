@@ -46,7 +46,8 @@ firebase.database()
                 (child.val().properties.status === 'marked' || child.val().properties.status === 'validate'))
                 geo.features.push(child.val());
         });
-        menuIncidentes(geo);
+        menuIncidentesReportados(geo);
+        menuCallesinundadas(geo);
         printFloodingData(geo);
     });
 
@@ -112,14 +113,32 @@ map.on('mouseleave', 'roads', function() {
     map.getCanvas().style.cursor = '';
 });
 
-function menuIncidentes(geo) {
+function menuIncidentesReportados(geo) {
     for (var i = 0; i < geo.features.length; i++) {
-        var idWay = geo.features[i].properties.id.split('/')[1];
-        $('#incidentes').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
-            '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
-            ' Calle: ' + idWay + '</a>')
+
+        if (geo.features[i].properties.status === 'marked') {
+            var idWay = geo.features[i].properties.id.split('/')[1];
+            $('#incidentes').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
+                '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
+                geo.features[i].properties.name + ' |' + geo.features[i].properties.fecha + '</a>')
+        }
+
     }
 }
+
+function menuCallesinundadas(geo) {
+    for (var i = 0; i < geo.features.length; i++) {
+
+        if (geo.features[i].properties.status === 'validate') {
+            var idWay = geo.features[i].properties.id.split('/')[1];
+            $('#callesinundadas').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
+                '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
+                geo.features[i].properties.name + ' |' + geo.features[i].properties.fecha + ' </a>')
+        }
+
+    }
+}
+
 
 $(document).on('click', '#validar', function(e) {
     for (var i = 0; i < damagedRoads.length; i++) {
@@ -130,22 +149,24 @@ $(document).on('click', '#validar', function(e) {
                 status: 'validate'
             });
     }
-    $.ajax({
-        contentType: 'application/json',
-        data: JSON.stringify({
-            ways: damagedRoads
-        }),
-        dataType: 'json',
-        success: function(data) {
-            alert('Calles registradas como inundadas')
-        },
-        error: function() {
-            alert('Re-procesar las calles tomara unos minutos')
-        },
-        processData: false,
-        type: 'POST',
-        url: OSRMHost + '/ignore/v1 '
-    });
+    setTimeout(function() {
+        $.ajax({
+            contentType: 'application/json',
+            data: JSON.stringify({
+                ways: damagedRoads
+            }),
+            dataType: 'json',
+            success: function(data) {
+                alert('Calles registradas como inundadas')
+            },
+            error: function() {
+                alert('Re-procesar las calles tomara unos minutos')
+            },
+            processData: false,
+            type: 'POST',
+            url: OSRMHost + '/ignore/v1 '
+        });
+    }, 200);
 });
 
 
