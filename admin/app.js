@@ -120,7 +120,7 @@ function menuIncidentesReportados(geo) {
             var idWay = geo.features[i].properties.id.split('/')[1];
             $('#incidentes').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
                 '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
-                geo.features[i].properties.name + ' |' + geo.features[i].properties.fecha + '</a>')
+                geo.features[i].properties.name + ' </br>' + geo.features[i].properties.fecha + '</a>')
         }
 
     }
@@ -133,7 +133,7 @@ function menuCallesinundadas(geo) {
             var idWay = geo.features[i].properties.id.split('/')[1];
             $('#callesinundadas').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
                 '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
-                geo.features[i].properties.name + ' |' + geo.features[i].properties.fecha + ' </a>')
+                geo.features[i].properties.name + ' </br>' + geo.features[i].properties.fecha + ' </a>')
         }
 
     }

@@ -1,97 +1,108 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset='utf-8' />
-    <title>Mapa</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
-    <link href='https://mapbox.com/base/latest/base.css' rel='stylesheet' />
-    <link rel="stylesheet" href="style.css">
-</head>
+    <head>
+        <meta charset='utf-8' />
+        <title>Mapa</title>
+        <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+        <link href='https://mapbox.com/base/latest/base.css' rel='stylesheet' />
+        <link rel="stylesheet" href="style.css">
+    </head>
 
-<body>
-    <!-- header -->
-    <div class='col12 clearfix '>
-        <div class='fill-navy dark navfix'>
-            <h1> Verificar Calles inundadas</h1>
+    <body>
+        <!-- header -->
+        <div class='col12 clearfix '>
+            <div class='fill-navy dark navfix'>
+                <h1> Verificar Calles inundadas</h1>
+            </div>
         </div>
-    </div>
-    <div class='pill'>
-        <a href='/' class='button'>Ver mapa de rutas alternas</a>
-        <a href='/registrar' class='button'>Registrar calles inundadas</a>
-    </div>
-    <!-- end header -->
-    <div class="container listIncidentes fill-navy">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="panel with-nav-tabs panel-default">
-                        <div class="panel-heading">
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#tab1default" data-toggle="tab">Calles Reportadas</a></li>
-                                <li><a href="#tab2default" data-toggle="tab">Calles inundadas</a></li>
-                            </ul>
-                        </div>
-                        <div class="panel-body">
-                            <div class="tab-content">
-                                <div class="tab-pane fade in active" id="tab1default">
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <!--                 <h3 class="my-4">Calles inundadas</h3>
- -->
-                                            <div id='incidentes' class="list-group">
-                                            </div>
-                                            <button id="validar" type="button" class="btn btn-danger">Validar calles como inundadas</button>
-                                            <br>
-                                            <button id="invalidar" type="button" class="btn btn-warning">Invalidar incidentes</button>
+        <div class='pill'>
+            <a href='/' class='button'>Ver mapa de rutas alternas</a>
+            <a href='/registrar' class='button'>Registrar calles inundadas</a>
+        </div>
+        <!-- end header -->
+        <div class="container listIncidentes" style="width: 400px;overflow-x: hidden; 
+             overflow-y: auto;">
+            <div class="container" style="width: 400px;">
+
+                <div class="panel with-nav-tabs panel-default">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab1default" data-toggle="tab">Calles Reportadas</a></li>
+                            <li><a href="#tab2default" data-toggle="tab">Calles inundadas</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="tab1default">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <!--                 <h3 class="my-4">Calles inundadas</h3>
+                                        -->
+                                        <div id='incidentes' class="list-group" style="max-height: 500px;
+                                             margin-bottom: 10px;
+                                             overflow:scroll;
+                                             -webkit-overflow-scrolling: touch;">
                                         </div>
+                                        <button id="validar" type="button" class="btn btn-danger btn-sm">Validar calles como inundadas</button>
+
+                                        <button id="invalidar" type="button" class="btn btn-warning btn-sm">Invalidar incidentes</button>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="tab2default">
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <!--                 <h3 class="my-4">Calles inundadas</h3>
- -->
-                                            <div id='callesinundadas' class="list-group">
-                                            </div>
-                                            <button id="invalidar" type="button" class="btn btn-danger">Marcar calle Limpia</button>
-                                            <br>
+                            </div>
+                            <div class="tab-pane fade" id="tab2default">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <!--                 <h3 class="my-4">Calles inundadas</h3>
+                                        -->
+                                        <div id='callesinundadas' class="list-group" style="max-height: 500px;
+                                             margin-bottom: 10px;
+                                             overflow:scroll;
+                                             -webkit-overflow-scrolling: touch;">
                                         </div>
+                                        <button id="invalidar" type="button" class="btn btn-danger btn-sm">Marcar calle Limpia</button>
+                                        <br>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
-    <div id='map'>
-    </div>
-    <!-- login -->
-    <div>
-        <div class=" lock">
-            <div style="margin-top: 200px;">
-                <form class="form-signin" style="text-align: center">
-                    <img src="logo.jpg" style="  height: 100px;">
-                    <h2 class="form-signin-heading">Iniciar sesión</h2>
-                    <input id="fieldUser" type="text" class="form-control" value="admin" name="username" placeholder="Email Address" required="" autofocus="" />
-                    <input id="fieldPassword" type="password" class="form-control" value="admin" name="password" placeholder="Password" required="" />
-                    <button id="btnAccess" class="btn btn-lg btn-primary btn-block" style="margin-top: 20px;" type="submit">Iniciar sesión</button>
-                </form>
+        <div id='map'>
+        </div>
+        <!--<div class="map-overlay" id="features"><h2>US population density</h2><div id="pd"><p>Hover over a state!</p></div></div>-->
+        <div class="map-overlay" id="legend">
+            <div id="hii"></div>
+            <div id="hvi"></div>
+            <div id="hpc"></div>
+        </div>
+        <!-- login -->
+        <div>
+            <div class=" lock">
+                <div style="margin-top: 200px;">
+                    <form class="form-signin" style="text-align: center">
+                        <img src="logo.jpg" style="  height: 100px;">
+                        <h2 class="form-signin-heading">Iniciar sesión</h2>
+                        <input id="fieldUser" type="text" class="form-control" value="admin" name="username" placeholder="Email Address" required="" autofocus="" />
+                        <input id="fieldPassword" type="password" class="form-control" value="admin" name="password" placeholder="Password" required="" />
+                        <button id="btnAccess" class="btn btn-lg btn-primary btn-block" style="margin-top: 20px;" type="submit">Iniciar sesión</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- end login -->
-    <script src='app.js'></script>
-</body>
+        <!-- end login -->
+        <script src='app.js'></script>
+    </body>
 
 </html>
