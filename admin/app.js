@@ -157,15 +157,16 @@ $(document).on('click', '#validar', function(e) {
             }),
             dataType: 'json',
             success: function(data) {
-                alert('Calles registradas como inundadas')
-            },
-            error: function() {
                 alert('Re-procesar las calles tomara unos minutos')
             },
             processData: false,
             type: 'POST',
             url: OSRMHost + '/ignore/v1 '
         });
+        setTimeout(function() {
+            alert('Re-procesar las calles tomara unos minutos!')
+            location.reload();
+        }, 200);
     }, 200);
 });
 
