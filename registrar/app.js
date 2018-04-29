@@ -1,3 +1,6 @@
+var usuario = '';
+var dni = '';
+
 $(document).on("click", '#crearIncidente', function() {
     var formData = new FormData($("#formulario")[0]);
     var ruta = "http://52.168.81.187:3021/upload";
@@ -140,6 +143,8 @@ function updateState(id, url, callback) {
         var r = db_feature.val();
         if (!r.properties.status) {
             r.properties.status = "marked";
+            r.properties.usuario = usuario;
+            r.properties.dni = dni;
             r.properties.img = url;
             ref.update(r);
         }
@@ -176,3 +181,11 @@ function changeStatus(e) {
         .addTo(map);
     localStorage.way_id = rd.properties.id;
 }
+
+$(document).on('click', '#btnAccess', function(e) {
+    usuario = $('#fieldusuario').val()
+    console.log(usuario)
+    dni = $('#fiellddni').val();
+    $('#usuario').text('| User: ' + usuario);
+    $('.lock').parent().remove();
+});
