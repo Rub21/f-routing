@@ -97,25 +97,14 @@ map.on('mouseleave', 'roads', function() {
 function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
         var idWay = geo.features[i].properties.id.split('/')[1];
-        $('#incidentes').append('<a href="#" id="way-' + idWay + '"class="list-group-item zoomtofeature">' +
+        $('#incidentes').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
             '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
             ' Calle: ' + idWay + '</a>')
     }
 }
 
-$(document).on('click', '.selectIncident', function(e) {
-    var idWay = e.target.getAttribute('value').split('-')[1];
-    console.log(idWay)
-    if ($('#w-' + idWay).is(":checked")) {
-        damagedRoads.push(idWay);
-    } else {
-        damagedRoads = damagedRoads.splice(idWay, 1);
-    }
-});
-
 $(document).on('click', '#validar', function(e) {
-    for (var i = 0; i < damagedRoads.length; i++) {
-        console.log(damagedRoads[i])
+    for (var i = 0; i < damagedRoads.length; i++) {        
         firebase
             .database()
             .ref('features/' + damagedRoads[i] + '/properties')
@@ -151,6 +140,7 @@ $(document).on('click', '.zoomtofeature', function(e) {
 
 function zoomHighway(e) {
     var idWay = e.target.getAttribute('id').split('-')[1];
+    //var idWay = e.target.getAttribute('value').split('-')[1];
     var feature;
     for (var i = 0; i < geo.features.length; i++) {
         if (idWay === geo.features[i].properties.id.split('/')[1]) {
@@ -159,10 +149,17 @@ function zoomHighway(e) {
     }
     var bbox = turf.bbox(feature);
     map.fitBounds(bbox);
+    
+    if ($('#w-' + idWay).is(":checked")) {
+        damagedRoads.push(idWay);
+    } else {
+        damagedRoads = damagedRoads.splice(idWay, 1);
+    }
+    console.log(damagedRoads);
 }
 
 $(document).on('click', '#btnAccess', function(e) {
     if ($('#fieldUser').val() === 'admin' && $('#fieldPassword').val() === 'admin') {
         $('.lock').parent().remove();
     }
-})
+});
