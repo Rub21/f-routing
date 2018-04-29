@@ -36,12 +36,15 @@ map.on('mouseleave', 'roads', function() {
 });
 firebase.database()
     .ref('features')
-    .orderByChild("properties/status")
-    .equalTo("marked")
+    // .orderByChild("properties/status")
+    // .equalTo("marked")
     .once('value')
     .then(function(snapshot) {
+        // console.log(snapshot)
         snapshot.forEach(function(child) {
-            geo.features.push(child.val());
+            if (child.val().properties && child.val().properties.status &&
+                (child.val().properties.status === 'marked' || child.val().properties.status === 'validate'))
+                geo.features.push(child.val());
         });
         menuIncidentes(geo);
         printFloodingData(geo);
@@ -66,7 +69,17 @@ function printFloodingData(geo) {
             "line-cap": "round"
         },
         "paint": {
-            'line-color': '#693bbb',
+            'line-color': {
+                property: 'status',
+                type: 'categorical',
+                stops: [
+                    ['marked', '#693bbb'],
+                    ['validate', '#f44141']
+                ],
+                "default": "#ddd"
+
+            },
+            // 'line-color': '#693bbb',
             "line-width": 8,
             'line-opacity': 0.5
         }
@@ -74,9 +87,14 @@ function printFloodingData(geo) {
 }
 
 map.on('click', 'roads', function(e) {
+    console.log(e.features[0].properties)
     var pu = new mapboxgl.Popup();
     pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
-        .setHTML(`<h5>${e.features[0].properties.id}</h5><img id="img_demo" src="" alt="Prev" width="800">`)
+        .setHTML(`<h4>Fecha:${e.features[0].properties.fecha}</h4>
+            <h4>Usuario :  ${e.features[0].properties.usuario}</h4>
+            <h4>DNI :  ${e.features[0].properties.dni}</h4>
+            <h4>id:${e.features[0].properties.id}</h4>
+            <img id="img_demo" src="" alt="Prev" width="500">`)
         .addTo(map);
 
     var ref = firebase.database().ref('features/' + e.features[0].properties.id.split('/')[1]);

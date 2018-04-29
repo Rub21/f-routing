@@ -143,6 +143,7 @@ function updateState(id, url, callback) {
             r.properties.status = "marked";
             r.properties.usuario = usuario;
             r.properties.dni = dni;
+            r.properties.fecha = new Date();
             r.properties.img = url;
             ref.update(r);
         }
