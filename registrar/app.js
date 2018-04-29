@@ -135,8 +135,6 @@ var p = `
             <img id="img_demo" src="" alt="Prev" width="300">
         </div>`;
 
-
-
 function updateState(id, url, callback) {
     var ref = firebase.database().ref('features/' + id.split('/')[1]);
     ref.on('value', function(db_feature) {
