@@ -23,29 +23,29 @@ var map = new mapboxgl.Map({
     zoom: 13
 });
 
-map.on('load', function() {
+map.on('load', function () {
     map.resize();
 });
 
-map.on('mouseenter', 'roads', function() {
+map.on('mouseenter', 'roads', function () {
     map.getCanvas().style.cursor = 'pointer';
 });
 
-map.on('mouseleave', 'roads', function() {
+map.on('mouseleave', 'roads', function () {
     map.getCanvas().style.cursor = '';
 });
 firebase.database()
-    .ref('features')
-    .orderByChild("properties/status")
-    .equalTo("marked")
-    .once('value')
-    .then(function(snapshot) {
-        snapshot.forEach(function(child) {
-            geo.features.push(child.val());
+        .ref('features')
+        .orderByChild("properties/status")
+        .equalTo("marked")
+        .once('value')
+        .then(function (snapshot) {
+            snapshot.forEach(function (child) {
+                geo.features.push(child.val());
+            });
+            menuIncidentes(geo);
+            printFloodingData(geo);
         });
-        menuIncidentes(geo);
-        printFloodingData(geo);
-    });
 
 
 function printFloodingData(geo) {
@@ -73,24 +73,24 @@ function printFloodingData(geo) {
     });
 }
 
-map.on('click', 'roads', function(e) {
+map.on('click', 'roads', function (e) {
     var pu = new mapboxgl.Popup();
     pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
-        .setHTML(`<img id="img_demo" src="" alt="Prev" width="800">`)
-        .addTo(map);
+            .setHTML(`<img id="img_demo" src="" alt="Prev" width="800">`)
+            .addTo(map);
 
     var ref = firebase.database().ref('features/' + e.features[0].properties.id.split('/')[1]);
-    ref.on('value', function(db_feature) {
+    ref.on('value', function (db_feature) {
         var r = db_feature.val();
         $('#img_demo').attr('src', r.properties.img);
     });
 });
 
-map.on('mouseenter', 'roads', function() {
+map.on('mouseenter', 'roads', function () {
     map.getCanvas().style.cursor = 'pointer';
 });
 
-map.on('mouseleave', 'roads', function() {
+map.on('mouseleave', 'roads', function () {
     map.getCanvas().style.cursor = '';
 });
 
@@ -98,31 +98,30 @@ function menuIncidentes(geo) {
     for (var i = 0; i < geo.features.length; i++) {
         var idWay = geo.features[i].properties.id.split('/')[1];
         $('#incidentes').append('<a href="#" id="w-' + idWay + '"class="list-group-item zoomtofeature">' +
-            '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
-            ' Calle: ' + idWay + '</a>')
+                '<input class="selectIncident" name="waySelected" type="checkbox" value="value-' + idWay + '" id="w-' + idWay + '"/> ' +
+                ' Calle: ' + idWay + '</a>')
     }
 }
 
-$(document).on('click', '#validar', function(e) {
-    for (var i = 0; i < damagedRoads.length; i++) {        
+$(document).on('click', '#validar', function (e) {
+    for (var i = 0; i < damagedRoads.length; i++) {
         firebase
-            .database()
-            .ref('features/' + damagedRoads[i] + '/properties')
-            .update({
-                status: 'validate'
-            });
+                .database()
+                .ref('features/' + damagedRoads[i] + '/properties')
+                .update({
+                    status: 'validate'
+                });
     }
-    //set speed of roads
     $.ajax({
         contentType: 'application/json',
         data: JSON.stringify({
             ways: damagedRoads
         }),
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             alert('Calles registradas como inundadas')
         },
-        error: function() {
+        error: function () {
             alert('Re-procesar las calles tomara unos minutos')
         },
         processData: false,
@@ -131,16 +130,23 @@ $(document).on('click', '#validar', function(e) {
     });
 });
 
-$(document).on('click', '.selectIncident', function(e) {
-    zoomHighway(e);
+$(document).on('click', '.selectIncident', function (e) {
+    var idWay = e.target.getAttribute('id').split('-')[1];
+    if (e.target.checked) {
+        damagedRoads.push(idWay);
+    } else {
+        var index = damagedRoads.indexOf(idWay);
+        if (index > -1) {
+            damagedRoads.splice(index, 1);
+        }
+    }
 });
-$(document).on('click', '.zoomtofeature', function(e) {
+$(document).on('click', '.zoomtofeature', function (e) {
     zoomHighway(e);
 });
 
 function zoomHighway(e) {
     var idWay = e.target.getAttribute('id').split('-')[1];
-    //var idWay = e.target.getAttribute('value').split('-')[1];
     var feature;
     for (var i = 0; i < geo.features.length; i++) {
         if (idWay === geo.features[i].properties.id.split('/')[1]) {
@@ -149,16 +155,9 @@ function zoomHighway(e) {
     }
     var bbox = turf.bbox(feature);
     map.fitBounds(bbox);
-    
-    if ($('#w-' + idWay).is(":checked")) {
-        damagedRoads.push(idWay);
-    } else {
-        damagedRoads = damagedRoads.splice(idWay, 1);
-    }
-    console.log(damagedRoads);
 }
 
-$(document).on('click', '#btnAccess', function(e) {
+$(document).on('click', '#btnAccess', function (e) {
     if ($('#fieldUser').val() === 'admin' && $('#fieldPassword').val() === 'admin') {
         $('.lock').parent().remove();
     }
