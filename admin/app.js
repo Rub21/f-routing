@@ -74,7 +74,7 @@ function printFloodingData(geo) {
 map.on('click', 'roads', function (e) {
     var pu = new mapboxgl.Popup(); 
     pu.setLngLat([e.lngLat.lng, e.lngLat.lat])
-            .setHTML(`<img id="img_demo" src="" alt="Prev" width="300">`)
+            .setHTML(`<img id="img_demo" src="" alt="Prev" width="800">`)
             .addTo(map);
     
     var ref = firebase.database().ref('features/' + e.features[0].properties.id.split('/')[1]);
